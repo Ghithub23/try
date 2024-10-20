@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenue aux iavistes</title>
+
+    <!-- CSS & JS de Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Arial', sans-serif;
+            color: black;
+        }
+
+        body {
+            background: rgba(245, 245, 220, 0.8); /* Blanc cassé avec opacité réduite */
+        }
+
+        .header {
+            background-color: rgba(255, 228, 225, 0.8); /* Rose bébé avec opacité réduite */
+            width: 100%;
+            text-align: center;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .header img {
+            display: block;
+            margin: 0 auto; /* Centre l'image horizontalement */
+        }
+
+        .header h1 {
+            color: rgba(0, 0, 0, 0.8); /* Noir avec opacité réduite */
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 10px;
+        }
+
+        .content {
+            display: flex;
+            flex-grow: 1;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .text-section {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(216, 250, 216, 0.8); /* Vert clair avec opacité réduite */
+            text-align: center;
+            margin-right: 20px;
+            border-radius: 10px;
+        }
+
+        .text-section h2 {
+            font-size: 2rem;
+            margin: 10px;
+            background-color: rgba(255, 250, 240, 0.8); /* Blanc floral avec opacité réduite */
+            color: rgba(0, 0, 0, 0.8); /* Noir avec opacité réduite */
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .department-section {
+            background-color: rgba(255, 250, 240, 0.8); /* Blanc floral avec opacité réduite */
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            color: rgba(0, 0, 0, 0.8); /* Noir avec opacité réduite */
+        }
+
+        .department-section h3 {
+            color: rgba(139, 69, 19, 0.8); /* Marron foncé avec opacité réduite */
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .department-section p {
+            font-size: 1.2rem;
+        }
+
+        #map {
+            flex: 1;
+            height: 100%;
+            min-height: 500px;
+            width: 100%;
+            border-left: 3px solid white;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.8);
+        }
+
+        .logo {
+            width: 100px; /* Largeur réduite du logo */
+            height: auto; /* Maintient les proportions */
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <img src="logo-iav.png.png" class="logo" alt="Logo IAV">
+        <h1>Bienvenue aux iavistes</h1>
+    </div>
+
+    <div class="content">
+        <!-- Section texte sur la gauche -->
+        <div class="text-section">
+            <h2>Découvrons les départements de l'IAV</h2>
+            <div class="department-section">
+                <h3>Le département de topographie</h3>
+                <p>Le département de topographie de l'IAV est dédié à l'étude et à la recherche dans le domaine de la géomatique, avec un focus sur la cartographie, la géodésie et les techniques de mesure précises.</p>
+            </div>
+        </div>
+
+        <!-- Carte sur la droite -->
+        <div id="map"></div>
+    </div>
+
+    <script>
+        // Initialisation de la carte centrée sur le département de topographie
+        const map = L.map('map').setView([33.9768, -6.8659], 17);
+
+        // Ajout de la couche OpenStreetMap
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        // Chargement du fichier GeoJSON
+        fetch('commune.geojson')
+            .then(response => response.json())
+            .then(data => {
+                L.geoJSON(data).addTo(map);
+            });
+
+        // Ajout d'un marqueur au centre de la carte
+        const marker = L.marker([33.9768, -6.8659]).addTo(map)
+            .bindPopup('<b>Bienvenue !</b><br />Département de topographie.');
+
+        // Interaction au clic sur la carte
+        map.on('click', (e) => {
+            L.popup()
+                .setLatLng(e.latlng)
+                .setContent(`Vous avez cliqué à : ${e.latlng.toString()}`)
+                .openOn(map);
+        });
+    </script>
+
+</body>
+</html>
